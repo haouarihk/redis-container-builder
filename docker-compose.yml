@@ -1,0 +1,11 @@
+# This is just for testing purposes
+version: '3.8'
+services:
+  redis:
+    build: .
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+volumes:
+  redis-data:
