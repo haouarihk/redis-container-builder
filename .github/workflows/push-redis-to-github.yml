@@ -32,5 +32,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/redis-container:${{ github.event.inputs.version }}
-            ghcr.io/${{ github.repository_owner }}/redis-container:latest
+            ghcr.io/${{ github.repository_owner }}/redis-container-builder:${{ github.event.inputs.version }}
+            ghcr.io/${{ github.repository_owner }}/redis-container-builder:latest
