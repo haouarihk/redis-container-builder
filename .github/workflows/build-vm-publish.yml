@@ -37,20 +37,13 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ github.run_number }} # Auto-incrementing tag
-          release_name: Redis VM Image v${{ github.run_number }}
+          name: Redis VM Image v${{ github.run_number }}
           body: |
             This release contains a pre-built VHD image with Redis v8 on Alpine Linux for Azure.
             - Image: redis-alpine.vhd
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v2 # Updated to v2
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: output/redis-alpine.vhd # Upload the VHD
-          asset_name: redis-alpine.vhd
-          asset_content_type: application/x-vhd # Set the correct MIME type
+          files: output/redis-alpine.vhd
