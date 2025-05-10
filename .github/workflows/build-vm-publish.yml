@@ -1,0 +1,57 @@
+name: Build Redis VM for Azure and Publish to GitHub Releases
+
+on:
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to create releases
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-x86 qemu-utils debootstrap xz-utils libguestfs-tools
+
+      - name: Create VM Image
+        run: |
+          chmod +x scripts/build-vm.sh
+          ./scripts/build-vm.sh
+
+      - name: Convert to VHD
+        run: |
+          sudo apt-get install -y qemu-utils
+          mkdir -p output
+          qemu-img convert -f qcow2 -O vpc output/redis-alpine.qcow2 output/redis-alpine.vhd
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: redis-vm-image
+          path: output/redis-alpine.vhd # Upload the VHD
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ github.run_number }} # Auto-incrementing tag
+          release_name: Redis VM Image v${{ github.run_number }}
+          body: |
+            This release contains a pre-built VHD image with Redis v8 on Alpine Linux for Azure.
+            - Image: redis-alpine.vhd
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: output/redis-alpine.vhd # Upload the VHD
+          asset_name: redis-alpine.vhd
+          asset_content_type: application/x-vhd # Set the correct MIME type
+
