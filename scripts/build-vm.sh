@@ -4,7 +4,7 @@ set -e
 # Configuration
 IMAGE_SIZE=2G
 IMAGE_NAME="redis-alpine.qcow2"
-MOUNT_POINT="/mnt"
+MOUNT_POINT="./tmp_mount"
 OUTPUT_DIR="output"
 ALPINE_VERSION="3.21" # Or specify a version
 REDIS_VERSION="8.0.0"
