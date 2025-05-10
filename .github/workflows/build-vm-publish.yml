@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Updated to v4
 
       - name: Install Dependencies
         run: |
@@ -20,7 +20,7 @@ jobs:
 
       - name: Create VM Image
         run: |
-          chmod +x scripts/build-vm.sh
+          chmod +x ./scripts/build-vm.sh
           ./scripts/build-vm.sh
 
       - name: Convert to VHD
@@ -30,7 +30,7 @@ jobs:
           qemu-img convert -f qcow2 -O vpc output/redis-alpine.qcow2 output/redis-alpine.vhd
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4 # Updated to v4
         with:
           name: redis-vm-image
           path: output/redis-alpine.vhd # Upload the VHD
@@ -48,10 +48,9 @@ jobs:
           prerelease: false
 
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v2 # Updated to v2
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: output/redis-alpine.vhd # Upload the VHD
           asset_name: redis-alpine.vhd
           asset_content_type: application/x-vhd # Set the correct MIME type
-
